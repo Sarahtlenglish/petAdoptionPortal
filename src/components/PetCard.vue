@@ -130,7 +130,6 @@ export default {
   max-width: 100%;
   height: 400px;
   margin: 0 auto;
-  perspective: 1000px;
   
   &.is-adopted {
     .pet-card-content {
@@ -146,24 +145,7 @@ export default {
     border-radius: 24px;
     overflow: hidden;
     background: white;
-    box-shadow: 
-      0 10px 20px rgba(0, 0, 0, 0.1),
-      0 6px 6px rgba(0, 0, 0, 0.05),
-      0 0 0 2px rgba(255, 255, 255, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    
-    &:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 
-        0 15px 30px rgba(0, 0, 0, 0.15),
-        0 10px 10px rgba(0, 0, 0, 0.08),
-        0 0 0 2px rgba(255, 255, 255, 0.2);
-      
-      .pet-actions {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .pet-image-wrapper {
@@ -177,7 +159,6 @@ export default {
       height: 100%;
       object-fit: cover;
       filter: brightness(1.1) contrast(0.95) saturate(1.2);
-      transition: transform 0.4s ease;
     }
     
     .pet-image-placeholder {
