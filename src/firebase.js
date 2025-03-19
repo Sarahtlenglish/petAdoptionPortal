@@ -7,7 +7,6 @@ import {
   persistentLocalCache,
   persistentMultipleTabManager
 } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
@@ -20,7 +19,6 @@ const firebaseConfig = {
 };
 
 let db;
-let storage;
 let auth;
 
 try {
@@ -36,10 +34,6 @@ try {
     })
   });
   console.log('Firestore initialized');
-  
-  // Get Storage instance
-  storage = getStorage(app);
-  console.log('Storage initialized');
   
   // Initialize Authentication
   auth = getAuth(app);
@@ -60,4 +54,4 @@ try {
   throw new Error('Could not initialize Firebase. Please try again later.');
 }
 
-export { db, storage, auth }; 
+export { db, auth }; 
