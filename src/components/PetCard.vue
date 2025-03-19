@@ -36,18 +36,15 @@
         <div class="pet-info-overlay">
           <div class="pet-details">
             <h2 class="pet-name">{{ pet.name }}, {{ pet.age }} år</h2>
-            <p v-if="!isNewToday && !pet.adopted" class="waiting-time">
-              {{ waitingTimeText }}
-            </p>
+            <p class="description">{{ truncatedDescription }}</p>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="pet-actions">
-          <router-link :to="'/pets/' + pet.id" class="action-button">
-            <span>Se mere</span>
+        <!-- Action Button -->
+        <div class="view-more">
+          <router-link :to="'/pets/' + pet.id" class="view-more-button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+              <path d="M9 18l6-6-6-6"/>
             </svg>
           </router-link>
         </div>
@@ -81,28 +78,19 @@ export default {
       const created = this.pet.createdAt.toDate();
       return Math.floor((now - created) / (1000 * 60 * 60 * 24)) === 0;
     },
-    waitingTimeText() {
-      if (!this.pet.createdAt) return '';
-      
-      const now = new Date();
-      const created = this.pet.createdAt.toDate();
-      const diffDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays === 0) return '';
-      if (diffDays === 1) return 'Har ventet 1 dag';
-      if (diffDays < 7) return `Har ventet ${diffDays} dage`;
-      if (diffDays < 14) return `Har ventet 1 uge`;
-      if (diffDays < 30) return `Har ventet ${Math.floor(diffDays / 7)} uger`;
-      if (diffDays < 60) return `Har ventet 1 måned`;
-      return `Har ventet ${Math.floor(diffDays / 30)} måneder`;
+    truncatedDescription() {
+      if (!this.pet.description) return '';
+      return this.pet.description.length > 100 
+        ? this.pet.description.substring(0, 100) + '...'
+        : this.pet.description;
     }
   },
   setup() {
     const categoryColors = {
       'dog': '#4ecdc4',    // Mint
-      'cat': '#ff6b6b',    // Coral
-      'rabbit': '#ffd93d', // Yellow
-      'bird': '#6c5ce7',   // Purple
+      'cat': '#f15bb5',    // Pink (matching the filter button)
+      'rabbit': '#ffa45c', // Orange
+      'bird': '#4361ee',   // Blue
       'fish': '#00b8a9',   // Teal
       'reptile': '#a8e6cf',// Sage
       'other': '#9656a1'   // Purple
@@ -226,6 +214,43 @@ export default {
     }
   }
 
+  .view-more {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    
+    .view-more-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px 0 0 20px;
+      color: vars.$primary-color;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+      
+      svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+      }
+      
+      &:hover {
+        width: 48px;
+        background: white;
+        
+        svg {
+          transform: translateX(2px);
+        }
+      }
+    }
+  }
+
   .pet-info-overlay {
     position: absolute;
     bottom: 0;
@@ -233,11 +258,10 @@ export default {
     right: 0;
     padding: 20px;
     background: linear-gradient(to top, 
-      rgba(0,0,0,0.9) 0%, 
-      rgba(0,0,0,0.6) 30%,
+      rgba(0,0,0,0.95) 0%, 
+      rgba(0,0,0,0.8) 50%,
       rgba(0,0,0,0) 100%);
     color: white;
-    pointer-events: none;
     
     .pet-details {
       .pet-name {
@@ -247,66 +271,17 @@ export default {
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         letter-spacing: -0.02em;
       }
-      .waiting-time {
+
+      .description {
+        margin-top: 0.5rem;
         font-size: 0.9rem;
         opacity: 0.9;
-        margin-top: 0.25rem;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .pet-actions {
-    position: absolute;
-    bottom: 80px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    z-index: 10;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 0 20px;
-    
-    .action-button {
-      width: auto;
-      height: auto;
-      border-radius: 30px;
-      border: none;
-      background: vars.$primary-color;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      text-decoration: none;
-      padding: 12px 24px;
-      font-weight: 600;
-      font-size: 1rem;
-      
-      span {
-        font-weight: 600;
-      }
-      
-      svg {
-        width: 20px;
-        height: 20px;
-        transition: all 0.2s ease;
-        stroke-width: 2.5;
-      }
-      
-      &:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        background-color: color.adjust(vars.$primary-color, $lightness: -5%);
-        
-        svg {
-          transform: translateX(4px);
-        }
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
