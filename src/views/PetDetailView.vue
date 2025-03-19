@@ -45,6 +45,17 @@
           </div>
         </div>
         
+        <!-- Waiting Time Counter -->
+        <div v-if="!pet.adopted" class="waiting-counter">
+          <div class="counter-header">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>{{ waitingTimeText }}</span>
+          </div>
+        </div>
+        
         <div class="description">
           <p>{{ pet.description }}</p>
         </div>
@@ -121,7 +132,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useRoute, useRouter } from 'vue-router'
@@ -172,6 +183,7 @@ export default {
         
         if (petSnapshot.exists()) {
           pet.value = { id: petSnapshot.id, ...petSnapshot.data() }
+          updateWaitingTime()
         } else {
           error.value = 'Kæledyret blev ikke fundet'
         }
@@ -238,7 +250,53 @@ export default {
       }
     }
 
-    onMounted(fetchPet)
+    const waitingTime = ref({ days: 0, hours: 0, minutes: 0 })
+    let timerInterval
+
+    const updateWaitingTime = () => {
+      if (!pet.value?.createdAt) return;
+      
+      const now = new Date()
+      const created = pet.value.createdAt.toDate()
+      const diff = now - created
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      
+      waitingTime.value = { days, hours, minutes }
+    }
+
+    const waitingTimeText = computed(() => {
+      if (!pet.value?.createdAt) return '';
+      
+      const now = new Date();
+      const created = pet.value.createdAt.toDate();
+      const diffMinutes = Math.floor((now - created) / (1000 * 60));
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      if (diffDays > 0) {
+        return `Har ventet ${diffDays} ${diffDays === 1 ? 'dag' : 'dage'} på et nyt hjem`;
+      } else if (diffHours > 0) {
+        return `Har ventet ${diffHours} ${diffHours === 1 ? 'time' : 'timer'} på et nyt hjem`;
+      } else {
+        return `Har ventet ${diffMinutes} ${diffMinutes === 1 ? 'minut' : 'minutter'} på et nyt hjem`;
+      }
+    });
+
+    onMounted(() => {
+      fetchPet()
+      timerInterval = setInterval(() => {
+        if (pet.value?.createdAt) {
+          updateWaitingTime();
+        }
+      }, 60000)
+    })
+
+    onUnmounted(() => {
+      if (timerInterval) clearInterval(timerInterval)
+    })
 
     return {
       pet,
@@ -254,7 +312,9 @@ export default {
       isAdopting,
       adoptPet,
       showAdoptDialog,
-      completeAdoption
+      completeAdoption,
+      waitingTime,
+      waitingTimeText
     }
   }
 }
@@ -429,6 +489,26 @@ export default {
             display: inline-flex;
             align-items: center;
             gap: 0.375rem;
+          }
+        }
+      }
+      
+      .waiting-counter {
+        background: rgba(vars.$primary-color, 0.1);
+        border-radius: vars.$border-radius-large;
+        padding: 1rem;
+        margin: 1rem 0;
+        
+        .counter-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          color: vars.$primary-color;
+          font-weight: vars.$font-weight-medium;
+          
+          svg {
+            width: 1.25rem;
+            height: 1.25rem;
           }
         }
       }

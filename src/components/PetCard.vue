@@ -26,11 +26,19 @@
         >
           {{ formatType(pet.type) }}
         </span>
+
+        <!-- New Today Badge -->
+        <span v-if="isNewToday" class="new-badge">
+          Ny i dag
+        </span>
         
         <!-- Info Overlay -->
         <div class="pet-info-overlay">
           <div class="pet-details">
             <h2 class="pet-name">{{ pet.name }}, {{ pet.age }} år</h2>
+            <p v-if="!isNewToday && !pet.adopted" class="waiting-time">
+              {{ waitingTimeText }}
+            </p>
           </div>
         </div>
 
@@ -47,8 +55,8 @@
         <!-- Status Badge -->
         <div v-if="pet.adopted" class="pet-status">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
           <span>Adopteret</span>
         </div>
@@ -64,6 +72,29 @@ export default {
     pet: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    isNewToday() {
+      if (!this.pet.createdAt) return false;
+      const now = new Date();
+      const created = this.pet.createdAt.toDate();
+      return Math.floor((now - created) / (1000 * 60 * 60 * 24)) === 0;
+    },
+    waitingTimeText() {
+      if (!this.pet.createdAt) return '';
+      
+      const now = new Date();
+      const created = this.pet.createdAt.toDate();
+      const diffDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) return '';
+      if (diffDays === 1) return 'Har ventet 1 dag';
+      if (diffDays < 7) return `Har ventet ${diffDays} dage`;
+      if (diffDays < 14) return `Har ventet 1 uge`;
+      if (diffDays < 30) return `Har ventet ${Math.floor(diffDays / 7)} uger`;
+      if (diffDays < 60) return `Har ventet 1 måned`;
+      return `Har ventet ${Math.floor(diffDays / 30)} måneder`;
     }
   },
   setup() {
@@ -216,6 +247,12 @@ export default {
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         letter-spacing: -0.02em;
       }
+      .waiting-time {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 0.25rem;
+        font-weight: 500;
+      }
     }
   }
 
@@ -298,5 +335,21 @@ export default {
       stroke: white;
     }
   }
+}
+
+.new-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(vars.$primary-color, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+  z-index: 2;
 }
 </style> 
