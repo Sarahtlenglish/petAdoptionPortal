@@ -315,13 +315,17 @@ export default {
 
 .pet-list-view {
   width: 100%;
+  min-height: calc(100vh - 80px);
   
   .list-header {
     text-align: center;
     margin-bottom: 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 
     h1 {
-      margin: 2rem 0;
+      margin: 1rem 0;
       font-size: 2.5rem;
       font-weight: vars.$font-weight-black;
       color: vars.$text-color-dark;
@@ -527,6 +531,12 @@ export default {
     text-align: center;
     padding: 4rem 1rem;
     width: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
     
     svg {
       width: 2.5rem;
@@ -551,7 +561,7 @@ export default {
       cursor: pointer;
       transition: all 0.3s ease;
     
-    &:hover {
+      &:hover {
         background: color.adjust(vars.$primary-color, $lightness: -5%);
       }
     }
