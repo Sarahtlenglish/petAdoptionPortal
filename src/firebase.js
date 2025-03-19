@@ -8,6 +8,7 @@ import {
   persistentMultipleTabManager
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAClbBtB656kVqXMMGMWgm581noSTjoVRY",
@@ -20,10 +21,13 @@ const firebaseConfig = {
 
 let db;
 let storage;
+let auth;
 
 try {
+  console.log('Initializing Firebase...');
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  console.log('Firebase app initialized');
   
   // Initialize Firestore with persistence
   db = initializeFirestore(app, {
@@ -31,9 +35,20 @@ try {
       tabManager: persistentMultipleTabManager()
     })
   });
+  console.log('Firestore initialized');
   
   // Get Storage instance
   storage = getStorage(app);
+  console.log('Storage initialized');
+  
+  // Initialize Authentication
+  auth = getAuth(app);
+  console.log('Auth initialized');
+  
+  // Add auth state listener
+  onAuthStateChanged(auth, (user) => {
+    console.log('Auth state changed:', user ? 'User is signed in' : 'No user');
+  });
   
   // Enable network
   enableNetwork(db).catch(error => {
@@ -45,4 +60,4 @@ try {
   throw new Error('Could not initialize Firebase. Please try again later.');
 }
 
-export { db, storage }; 
+export { db, storage, auth }; 

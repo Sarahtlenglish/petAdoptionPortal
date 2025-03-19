@@ -1,21 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '../firebase'
 import HomeView from '../views/HomeView.vue'
 import PetListView from '../views/PetListView.vue'
 import PetDetailView from '../views/PetDetailView.vue'
 import AddPetView from '../views/AddPetView.vue'
 import EditPetView from '../views/EditPetView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
+import Auth from '../components/Auth.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: () => import('../views/HomeView.vue')
   },
   {
     path: '/pets',
-    name: 'pet-list',
-    component: PetListView
+    name: 'pets',
+    component: () => import('../views/PetListView.vue')
   },
   {
     path: '/pets/:id',
@@ -24,8 +26,9 @@ const routes = [
   },
   {
     path: '/add',
-    name: 'add-pet',
-    component: AddPetView
+    name: 'add',
+    component: () => import('../views/AddPetView.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/pets/:id/edit',
@@ -40,8 +43,20 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isAuthenticated = auth.currentUser
+
+  if (requiresAuth && !isAuthenticated) {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router 
