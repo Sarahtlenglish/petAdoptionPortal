@@ -1,10 +1,35 @@
-// Colors
-$primary-color: #42b983;
-$secondary-color: #2c3e50;
-$error-color: #e74c3c;
-$success-color: #2ecc71;
-$background-color: #f9f9f9;
-$border-color: #ddd;
+// Colors - harmonious pastel palette
+$primary-color: #ff6b6b; // Warm coral
+$secondary-color: #4ecdc4; // Fresh mint
+
+// UI Colors
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$text-color-dark: #2d3436;
+$text-color-light: #ffffff;
+$badge-color: #f1f3f5;
+
+// Button Colors
+$button-primary: #ff5a5f;
+$button-secondary: #00c2c2;
+
+// Pet type colors - balanced palette
+$pet-colors: (
+  'dog': #4ecdc4,    // Mint - Loyal and calm
+  'cat': #ff6b6b,    // Coral - Independent and warm
+  'rabbit': #ffd93d, // Warm yellow - Playful and soft
+  'bird': #6c5ce7,   // Soft purple - Graceful and free
+  'fish': #00b8a9,   // Teal - Fluid and peaceful
+  'reptile': #a8e6cf,// Sage - Natural and earthy
+  'other': #9656a1   // Purple - Mysterious and unique
+);
+
+// Typography
+$font-family: 'Montserrat', 'Avenir', Helvetica, Arial, sans-serif;
+$font-weight-normal: 400;
+$font-weight-medium: 600;
+$font-weight-bold: 700;
+$font-weight-black: 900;
 
 // Spacing
 $spacing-small: 5px;
@@ -12,8 +37,18 @@ $spacing-medium: 10px;
 $spacing-large: 20px;
 $spacing-xlarge: 30px;
 
-// Typography
-$font-family: Arial, sans-serif;
+// Font sizes
 $font-size-base: 16px;
 $font-size-large: 20px;
-$font-size-xlarge: 24px; 
+$font-size-xlarge: 24px;
+
+// Border radius
+$border-radius-small: 8px;
+$border-radius-medium: 15px;
+$border-radius-large: 25px;
+$border-radius-circle: 50%;
+
+// Error and success colors
+$error-color: #ff6b6b;    // Matches primary
+$success-color: #4ecdc4;  // Matches secondary
+$border-color: #ddd; 

@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import PetListView from '../views/PetListView.vue'
 import PetDetailView from '../views/PetDetailView.vue'
 import AddPetView from '../views/AddPetView.vue'
+import EditPetView from '../views/EditPetView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
 
 const routes = [
   {
@@ -24,6 +26,16 @@ const routes = [
     path: '/add',
     name: 'add-pet',
     component: AddPetView
+  },
+  {
+    path: '/pets/:id/edit',
+    name: 'edit-pet',
+    component: EditPetView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFoundView
   }
 ]
 
