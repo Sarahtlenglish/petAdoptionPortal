@@ -35,6 +35,13 @@
         <!-- Info Overlay -->
         <div class="pet-info-overlay">
           <div class="pet-details">
+            <div v-if="pet.adopted" class="pet-status">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>Adopteret</span>
+            </div>
             <h2 class="pet-name">{{ pet.name }}, {{ pet.age }} år</h2>
             <p class="description">{{ truncatedDescription }}</p>
           </div>
@@ -47,15 +54,6 @@
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </router-link>
-        </div>
-
-        <!-- Status Badge -->
-        <div v-if="pet.adopted" class="pet-status">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <span>Adopteret</span>
         </div>
       </div>
     </div>
@@ -264,6 +262,27 @@ export default {
     color: white;
     
     .pet-details {
+      .pet-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+        backdrop-filter: blur(4px);
+        
+        svg {
+          width: 12px;
+          height: 12px;
+          stroke: white;
+        }
+      }
+
       .pet-name {
         margin: 0;
         font-size: 1.4rem;
@@ -283,31 +302,6 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
       }
-    }
-  }
-
-  .pet-status {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    backdrop-filter: blur(4px);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    
-    svg {
-      width: 14px;
-      height: 14px;
-      stroke: white;
     }
   }
 }
