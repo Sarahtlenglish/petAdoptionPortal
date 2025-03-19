@@ -91,7 +91,11 @@
     </div>
 
     <div v-if="loading" class="loading-state">
-      <div class="loader"></div>
+      <div class="paw-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 119.72 122.88">
+          <path class="st0" d="M40.06,0.37c9.4,0,17.03,11.69,17.03,26.1s-7.63,26.1-17.03,26.1c-9.4,0-17.03-11.68-17.03-26.1 C23.04,12.06,30.66,0.37,40.06,0.37L40.06,0.37z M61.71,63.55c19.94,0.04,22.42,13.25,39.23,35.86 c8.38,16.45-2.5,26.82-21.15,22.38c-8.46-4.31-14.41-5.83-20.38-5.63c-10.34,0.36-12.95,7.18-24.98,6.7 c-9.28-0.25-13.46-4.14-14.27-10.07c-0.87-6.3,1.56-10.28,4.52-15.49C36.18,77.02,48.07,61.01,61.71,63.55L61.71,63.55L61.71,63.55 z M7.17,39.08C0.14,41.86-2.1,52.85,2.16,63.62C6.42,74.39,15.57,80.87,22.6,78.09c7.03-2.78,9.27-13.77,5.01-24.54 C23.35,42.78,14.2,36.3,7.17,39.08L7.17,39.08z M112.55,39.08c7.03,2.78,9.27,13.77,5.01,24.54 c-4.26,10.77-13.42,17.25-20.44,14.47c-7.03-2.78-9.27-13.77-5.01-24.54C96.37,42.78,105.52,36.3,112.55,39.08L112.55,39.08z M79.35,0c9.4,0,17.03,11.69,17.03,26.1s-7.63,26.1-17.03,26.1c-9.4,0-17.03-11.68-17.03-26.1C62.33,11.69,69.95,0,79.35,0L79.35,0 z"/>
+        </svg>
+      </div>
       <p>Finder kæledyr...</p>
     </div>
     
@@ -161,32 +165,44 @@ export default {
       {
         value: 'dog',
         label: 'Hunde',
-        color: '#4ecdc4',  // mint
+        color: '#4ecdc4',  // Mint - matching detail view
         hoverColor: '#3dbdb4'
       },
       {
         value: 'cat',
         label: 'Katte',
-        color: '#f15bb5',  // pink
-        hoverColor: '#ef2fa1'
+        color: '#f15bb5',  // Pink - matching detail view
+        hoverColor: '#e13a3e'
       },
       {
         value: 'rabbit',
         label: 'Kaniner',
-        color: '#ffa45c',  // orange
-        hoverColor: '#ff8f29'
+        color: '#ffa45c',  // Orange - matching detail view
+        hoverColor: '#ff8c3c'
       },
       {
         value: 'bird',
         label: 'Fugle',
-        color: '#4361ee',  // blue
-        hoverColor: '#1f43eb'
+        color: '#4361ee',  // Blue - matching detail view
+        hoverColor: '#3a5baa'
+      },
+      {
+        value: 'fish',
+        label: 'Fisk',
+        color: '#00b8a9',  // Teal - matching detail view
+        hoverColor: '#0097a7'
+      },
+      {
+        value: 'reptile',
+        label: 'Krybdyr',
+        color: '#a8e6cf',  // Sage - matching detail view
+        hoverColor: '#8bc3a5'
       },
       {
         value: 'other',
         label: 'Andre',
-        color: '#9656a1',  // purple
-        hoverColor: '#7c4685'
+        color: '#9656a1',  // Purple - matching detail view
+        hoverColor: '#7a4e9e'
       }
     ]
 
@@ -363,7 +379,7 @@ export default {
       background: white;
       color: #666;
       font-size: 1rem;
-      font-weight: vars.$font-weight-medium;
+      font-weight: vars.$font-weight-normal;
       cursor: pointer;
       transition: all 0.3s ease;
       
@@ -392,7 +408,7 @@ export default {
       border-radius: vars.$border-radius-medium;
       background: white;
       font-size: 1rem;
-      font-weight: vars.$font-weight-medium;
+      font-weight: vars.$font-weight-normal;
       transition: all 0.3s ease;
 
       &:hover {
@@ -568,20 +584,73 @@ export default {
   }
 
   .loading-state {
-    .loader {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid vars.$primary-color;
-      border-radius: 50%;
-      margin: 0 auto 20px;
-      animation: spin 1s linear infinite;
+    text-align: center;
+    padding: 4rem 1rem;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    
+    .paw-icon {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 1.25rem;
+      
+      svg {
+        width: 100%;
+        height: 100%;
+        fill: vars.$primary-color;
+        animation: pulse 2s infinite;
+      }
+    }
+    
+    p {
+      color: #666;
+      margin-bottom: 1.25rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  .tag {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    border: 2px solid transparent;
+    
+    &.clickable {
+      &:hover {
+        background: var(--tag-hover-color);
+        color: white;
+        transform: translateY(-1px);
+      }
+      
+      &.active {
+        background: var(--tag-color);
+        color: white;
+      }
     }
   }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style> 

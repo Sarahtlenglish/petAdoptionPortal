@@ -135,8 +135,11 @@ const form = ref({
   age: '',
   description: '',
   imageUrl: '',
-  adopted: false
+  adopted: false,
+  requirements: []
 })
+
+const newRequirement = ref('')
 
 const petTypes = {
   'dog': 'Hund',
@@ -193,6 +196,17 @@ const removeImage = () => {
   if (fileInput.value) {
     fileInput.value.value = ''
   }
+}
+
+const addRequirement = () => {
+  if (newRequirement.value.trim()) {
+    form.value.requirements.push(newRequirement.value.trim())
+    newRequirement.value = ''
+  }
+}
+
+const removeRequirement = (index) => {
+  form.value.requirements.splice(index, 1)
 }
 
 const submitForm = async () => {
@@ -469,6 +483,61 @@ const submitForm = async () => {
           opacity: 0.7;
           cursor: not-allowed;
           transform: none;
+        }
+      }
+    }
+
+    .requirements-input {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #eee;
+        border-radius: vars.$border-radius-medium;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: vars.$primary-color;
+          box-shadow: 0 0 0 3px rgba(vars.$primary-color, 0.1);
+        }
+      }
+    }
+
+    .requirements-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      .requirement-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: rgba(vars.$primary-color, 0.1);
+        color: vars.$primary-color;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        .remove-tag {
+          background: none;
+          border: none;
+          color: inherit;
+          font-size: 1.2rem;
+          line-height: 1;
+          padding: 0;
+          cursor: pointer;
+          opacity: 0.7;
+          transition: opacity 0.3s ease;
+
+          &:hover {
+            opacity: 1;
+          }
         }
       }
     }

@@ -3,14 +3,7 @@
     <nav class="app-navigation">
       <div class="navigation-content">
         <router-link to="/" class="navigation-logo">
-          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            <circle cx="9" cy="10" r="1.2" fill="currentColor"/>
-            <circle cx="15" cy="10" r="1.2" fill="currentColor"/>
-            <circle cx="8" cy="13" r="1.2" fill="currentColor"/>
-            <circle cx="16" cy="13" r="1.2" fill="currentColor"/>
-            <circle cx="12" cy="14" r="1.8" fill="currentColor"/>
-          </svg>
+          <img src="@/assets/paw.svg" alt="PetMatch Logo" class="logo-icon">
           <span class="logo-text">PetMatch</span>
         </router-link>
         
@@ -268,11 +261,31 @@ body {
         width: 2rem;
         height: 2rem;
         color: vars.$primary-color;
+        transition: animation 0.3s ease;
       }
       
       .logo-text {
         font-size: 1.5rem;
-        font-weight: vars.$font-weight-black;
+        font-weight: 900;
+        background: linear-gradient(90deg, #ff6b6b, #ff2d2d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+        transition: all 0.3s ease;
+      }
+
+      &:hover {
+        .logo-icon {
+          animation: heartbeat 0.8s ease-in-out;
+          animation-iteration-count: 7;
+        }
+        .logo-text {
+          transform: scale(1.05);
+          background: linear-gradient(90deg, #ff6b6b, #ff1a1a);
+          -webkit-background-clip: text;
+          background-clip: text;
+        }
       }
     }
 
@@ -626,6 +639,27 @@ body {
         }
       }
     }
+  }
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>

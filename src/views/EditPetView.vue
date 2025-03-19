@@ -95,6 +95,29 @@
             ></textarea>
           </div>
           
+          <div class="form-group">
+            <label for="requirements">Krav</label>
+            <div class="requirements-input">
+              <input 
+                type="text" 
+                id="newRequirement"
+                v-model="newRequirement"
+                placeholder="Tilføj et krav og tryk Enter"
+                @keyup.enter="addRequirement"
+              >
+              <div class="requirements-tags">
+                <span 
+                  v-for="(req, index) in form.requirements" 
+                  :key="index"
+                  class="requirement-tag"
+                >
+                  {{ req }}
+                  <button type="button" @click="removeRequirement(index)" class="remove-tag">×</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" :disabled="isUpdating">
               <span>{{ isUpdating ? 'Opdaterer...' : 'Gem ændringer' }}</span>
@@ -146,12 +169,14 @@ export default {
       type: '',
       age: null,
       description: '',
-      imageUrl: ''
+      imageUrl: '',
+      requirements: []
     })
     const error = ref(null)
     const isUpdating = ref(false)
     const imagePreview = ref(null)
     const imageFile = ref(null)
+    const newRequirement = ref('')
     
     const fetchPet = async () => {
       try {
@@ -165,7 +190,8 @@ export default {
             type: petData.type,
             age: petData.age,
             description: petData.description,
-            imageUrl: petData.imageUrl
+            imageUrl: petData.imageUrl,
+            requirements: petData.requirements || []
           }
           imagePreview.value = petData.imageUrl
         } else {
@@ -212,6 +238,17 @@ export default {
       if (input) input.value = ''
     }
     
+    const addRequirement = () => {
+      if (newRequirement.value.trim()) {
+        form.value.requirements.push(newRequirement.value.trim())
+        newRequirement.value = ''
+      }
+    }
+    
+    const removeRequirement = (index) => {
+      form.value.requirements.splice(index, 1)
+    }
+    
     const updatePet = async () => {
       error.value = null
       
@@ -234,7 +271,8 @@ export default {
           type: form.value.type,
           age: form.value.age,
           description: form.value.description,
-          imageUrl: form.value.imageUrl
+          imageUrl: form.value.imageUrl,
+          requirements: form.value.requirements
         })
         
         router.push(`/pets/${petId}`)
@@ -257,7 +295,10 @@ export default {
       handleImageChange,
       triggerFileInput,
       removeImage,
-      updatePet
+      updatePet,
+      newRequirement,
+      addRequirement,
+      removeRequirement
     }
   }
 }
@@ -592,5 +633,60 @@ export default {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.requirements-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #eee;
+    border-radius: vars.$border-radius-medium;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: vars.$primary-color;
+      box-shadow: 0 0 0 3px rgba(vars.$primary-color, 0.1);
+    }
+  }
+}
+
+.requirements-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  .requirement-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(vars.$primary-color, 0.1);
+    color: vars.$primary-color;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    .remove-tag {
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.2rem;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }
 </style> 
