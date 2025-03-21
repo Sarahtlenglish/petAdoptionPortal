@@ -246,7 +246,7 @@ export default {
     
     const categoryColors = {
       'dog': '#4ecdc4',    // Mint
-      'cat': '#f15bb5',    // Pink
+      'cat': '#e9203b',    // Pink
       'rabbit': '#ffa45c', // Orange
       'bird': '#4361ee',   // Blue
       'fish': '#00b8a9',   // Teal
