@@ -131,7 +131,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import { collection, getDocs, query, orderBy } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import PetCard from '../components/PetCard.vue'
 
@@ -241,6 +241,45 @@ export default {
       }
     }
 
+    const migrateExistingPets = async () => {
+      try {
+        const petsCollection = collection(db, 'pets')
+        const petsSnapshot = await getDocs(petsCollection)
+        
+        for (const docSnapshot of petsSnapshot.docs) {
+          const petData = docSnapshot.data()
+          const updates = {}
+          
+          // Konverter goodWith fra objekt til array
+          if (petData.goodWith && typeof petData.goodWith === 'object' && !Array.isArray(petData.goodWith)) {
+            const goodWithArray = []
+            if (petData.goodWith.children) goodWithArray.push('Børn')
+            if (petData.goodWith.dogs) goodWithArray.push('Hunde')
+            if (petData.goodWith.cats) goodWithArray.push('Katte')
+            updates.goodWith = goodWithArray
+          }
+          
+          // Konverter requirements fra objekt til array
+          if (petData.requirements && typeof petData.requirements === 'object' && !Array.isArray(petData.requirements)) {
+            const requirementsArray = []
+            if (petData.requirements.experience) requirementsArray.push('Erfaring med dyrehold')
+            if (petData.requirements.garden) requirementsArray.push('Adgang til have')
+            if (petData.requirements.otherPets) requirementsArray.push('Skal have andre kæledyr')
+            updates.requirements = requirementsArray
+          }
+          
+          // Hvis der er ændringer, opdater dokumentet
+          if (Object.keys(updates).length > 0) {
+            await updateDoc(doc(db, 'pets', docSnapshot.id), updates)
+          }
+        }
+        
+        console.log('Data migration completed')
+      } catch (err) {
+        console.error('Error migrating data:', err)
+      }
+    }
+
     const filteredPets = computed(() => {
       let result = [...pets.value]
       
@@ -301,7 +340,10 @@ export default {
       console.log('Favorited:', id)
     }
 
-    onMounted(fetchPets)
+    onMounted(async () => {
+      await migrateExistingPets()
+      await fetchPets()
+    })
 
     return {
       pets,

@@ -107,14 +107,15 @@
             <span class="attribute-label">Går godt med</span>
             <div class="compatibility-tags">
               <span 
-                v-if="pet.goodWith?.children"
-              >Børn</span>
+                v-for="tag in pet.goodWith"
+                :key="tag"
+              >{{ tag }}</span>
               <span 
-                v-if="pet.goodWith?.dogs"
-              >Hunde</span>
-              <span 
-                v-if="pet.goodWith?.cats"
-              >Katte</span>
+                v-if="!pet.goodWith || pet.goodWith.length === 0"
+                class="no-requirements"
+              >
+                Ingen angivelser
+              </span>
             </div>
           </div>
 
@@ -122,22 +123,11 @@
             <span class="attribute-label">Krav</span>
             <div class="requirements-tags">
               <span 
-                v-if="pet.requirements?.experience"
-              >
-                Erfaring med dyrehold
-              </span>
+                v-for="tag in pet.requirements"
+                :key="tag"
+              >{{ tag }}</span>
               <span 
-                v-if="pet.requirements?.garden"
-              >
-                Adgang til have
-              </span>
-              <span 
-                v-if="pet.requirements?.otherPets"
-              >
-                Skal have andre kæledyr
-              </span>
-              <span 
-                v-if="!hasAnyRequirements"
+                v-if="!pet.requirements || pet.requirements.length === 0"
                 class="no-requirements"
               >
                 Ingen særlige krav
@@ -274,6 +264,8 @@ export default {
         cat: 'Kat',
         rabbit: 'Kanin',
         bird: 'Fugl',
+        fish: 'Fisk',
+        reptile: 'Krybdyr',
         other: 'Andet'
       }
       return types[type?.toLowerCase()] || 'Andet'

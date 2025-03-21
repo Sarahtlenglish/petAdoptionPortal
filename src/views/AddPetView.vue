@@ -1,118 +1,299 @@
 <template>
   <div class="add-pet-form">
-    <div class="image-section">
-      <h2>BILLEDE</h2>
+    <!-- Step indicator -->
+    <div class="step-indicator">
       <div 
-        class="image-upload"
-        @click="triggerFileInput"
-        @dragover.prevent
-        @drop.prevent="handleFileDrop"
+        class="step" 
+        :class="{ active: currentStep === 1 }"
+        @click="currentStep = 1"
       >
-        <input 
-          type="file" 
-          ref="fileInput"
-          @change="handleFileSelect"
-          accept="image/*"
-        >
-        
-        <div v-if="imagePreview" class="image-preview">
-          <img :src="imagePreview" alt="Preview">
-          <button type="button" class="remove-image" @click.stop="removeImage">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <template v-else>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-          <span class="upload-text">Klik for at vælge billede</span>
-          <span class="upload-hint">eller træk og slip (maks. 1 MB)</span>
-        </template>
+        <span class="step-number">1</span>
+        <span class="step-label">Grundlæggende info</span>
       </div>
-      
-      <div v-if="error" class="error-message">
-        {{ error }}
+      <div 
+        class="step" 
+        :class="{ active: currentStep === 2 }"
+        @click="form.name && form.type && form.age && form.description && form.imageUrl ? currentStep = 2 : null"
+      >
+        <span class="step-number">2</span>
+        <span class="step-label">Adfærd & behov</span>
       </div>
     </div>
 
-    <div class="form-section">
-      <h1>Tilføj nyt kæledyr</h1>
-      <p class="subtitle">Del et kæledyr der søger et nyt hjem</p>
-
-      <form @submit.prevent="submitForm">
-        <div class="form-group">
-          <label for="name">NAVN</label>
-          <input 
-            type="text" 
-            id="name"
-            v-model="form.name"
-            placeholder="F.eks. Flemming"
-            required
+    <!-- Form Content -->
+    <div class="form-content">
+      <!-- Step 1 -->
+      <div v-if="currentStep === 1" class="form-step">
+        <div class="image-section">
+          <h2>BILLEDE</h2>
+          <div 
+            class="image-upload"
+            @click="triggerFileInput"
+            @dragover.prevent
+            @drop.prevent="handleFileDrop"
           >
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="type">TYPE</label>
-            <select 
-              id="type"
-              v-model="form.type"
-              required
-            >
-              <option value="" disabled>Vælg type</option>
-              <option v-for="(label, value) in petTypes" :key="value" :value="value">
-                {{ label }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="age">ALDER (ÅR)</label>
             <input 
-              type="number" 
-              id="age"
-              v-model="form.age"
-              placeholder="F.eks. 3"
-              min="0"
-              required
+              type="file" 
+              ref="fileInput"
+              @change="handleFileSelect"
+              accept="image/*"
             >
+            
+            <div v-if="imagePreview" class="image-preview">
+              <img :src="imagePreview" alt="Preview">
+              <button type="button" class="remove-image" @click.stop="removeImage">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <template v-else>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span class="upload-text">Klik for at vælge billede</span>
+              <span class="upload-hint">eller træk og slip (maks. 1 MB)</span>
+            </template>
+          </div>
+          
+          <div v-if="error" class="error-message">
+            {{ error }}
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="description">BESKRIVELSE</label>
-          <textarea 
-            id="description"
-            v-model="form.description"
-            placeholder="Fortæl lidt om kæledyrets personlighed..."
-            required
-          ></textarea>
+        <div class="form-section">
+          <h1>Tilføj nyt kæledyr</h1>
+          <p class="subtitle">Del et kæledyr der søger et nyt hjem</p>
+
+          <form @submit.prevent="nextStep">
+            <div class="form-group">
+              <label for="name">NAVN</label>
+              <input 
+                type="text" 
+                id="name"
+                v-model="form.name"
+                placeholder="F.eks. Flemming"
+                required
+              >
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="type">TYPE</label>
+                <select 
+                  id="type"
+                  v-model="form.type"
+                  required
+                >
+                  <option value="" disabled>Vælg type</option>
+                  <option v-for="(label, value) in petTypes" :key="value" :value="value">
+                    {{ label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="age">ALDER (ÅR)</label>
+                <input 
+                  type="number" 
+                  id="age"
+                  v-model="form.age"
+                  placeholder="F.eks. 3"
+                  min="0"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">BESKRIVELSE</label>
+              <textarea 
+                id="description"
+                v-model="form.description"
+                placeholder="Fortæl lidt om kæledyrets personlighed..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+              >
+                <span>Næste</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+              <router-link to="/pets" class="btn btn-secondary">
+                <span>Annuller</span>
+              </router-link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div v-if="currentStep === 2" class="form-step">
+        <div class="image-section preview-section">
+          <h2>FORHÅNDSVISNING</h2>
+          <div class="image-preview-container">
+            <img :src="form.imageUrl" :alt="form.name">
+          </div>
         </div>
 
-        <div class="form-actions">
-          <button 
-            type="submit" 
-            class="btn btn-primary"
-            :disabled="isSubmitting"
-          >
-            <span>{{ isSubmitting ? 'Tilføjer...' : 'Tilføj kæledyr' }}</span>
-            <svg v-if="!isSubmitting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-            <div v-else class="spinner"></div>
-          </button>
-          <router-link to="/pets" class="btn btn-secondary">
-            <span>Annuller</span>
-          </router-link>
+        <div class="form-section">
+          <h1>Adfærd & behov</h1>
+          <p class="subtitle">Fortæl os mere om {{ form.name }}</p>
+
+          <form @submit.prevent="submitForm">
+            <!-- Size -->
+            <div class="form-group">
+              <label>STØRRELSE</label>
+              <div class="radio-group">
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.size" 
+                    value="small"
+                    required
+                  >
+                  <span>Lille</span>
+                </label>
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.size" 
+                    value="medium"
+                  >
+                  <span>Mellem</span>
+                </label>
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.size" 
+                    value="large"
+                  >
+                  <span>Stor</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Activity Level -->
+            <div class="form-group">
+              <label>AKTIVITETSNIVEAU</label>
+              <div class="radio-group">
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.activityLevel" 
+                    value="low"
+                    required
+                  >
+                  <span>Rolig</span>
+                </label>
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.activityLevel" 
+                    value="moderate"
+                  >
+                  <span>Moderat</span>
+                </label>
+                <label class="radio-button">
+                  <input 
+                    type="radio" 
+                    v-model="form.activityLevel" 
+                    value="high"
+                  >
+                  <span>Meget aktiv</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Goes Good With -->
+            <div class="form-group">
+              <label>GÅR GODT MED</label>
+              <div class="tag-input-group">
+                <div class="tag-input">
+                  <input 
+                    type="text" 
+                    v-model="newGoodWith"
+                    @keydown.enter.prevent="addGoodWith"
+                    placeholder="Skriv og tryk enter..."
+                  >
+                </div>
+                <div class="tags-container">
+                  <span 
+                    v-for="(tag, index) in form.goodWith" 
+                    :key="index"
+                    class="tag"
+                  >
+                    {{ tag }}
+                    <button @click="removeGoodWith(index)" class="remove-tag">×</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="form-group">
+              <label>KRAV</label>
+              <div class="tag-input-group">
+                <div class="tag-input">
+                  <input 
+                    type="text" 
+                    v-model="newRequirement"
+                    @keydown.enter.prevent="addRequirement"
+                    placeholder="Skriv og tryk enter..."
+                  >
+                </div>
+                <div class="tags-container">
+                  <span 
+                    v-for="(tag, index) in form.requirements" 
+                    :key="index"
+                    class="tag"
+                  >
+                    {{ tag }}
+                    <button @click="removeRequirement(index)" class="remove-tag">×</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                @click="currentStep = 1"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="19" y1="12" x2="5" y2="12"/>
+                  <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span>Tilbage</span>
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                :disabled="isSubmitting"
+              >
+                <span>{{ isSubmitting ? 'Tilføjer...' : 'Tilføj kæledyr' }}</span>
+                <svg v-if="!isSubmitting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <div v-else class="spinner"></div>
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +309,7 @@ const fileInput = ref(null)
 const imagePreview = ref(null)
 const error = ref(null)
 const isSubmitting = ref(false)
+const currentStep = ref(1)
 
 const form = ref({
   name: '',
@@ -136,9 +318,13 @@ const form = ref({
   description: '',
   imageUrl: '',
   adopted: false,
+  size: '',
+  activityLevel: '',
+  goodWith: [],
   requirements: []
 })
 
+const newGoodWith = ref('')
 const newRequirement = ref('')
 
 const petTypes = {
@@ -198,6 +384,17 @@ const removeImage = () => {
   }
 }
 
+const addGoodWith = () => {
+  if (newGoodWith.value.trim()) {
+    form.value.goodWith.push(newGoodWith.value.trim())
+    newGoodWith.value = ''
+  }
+}
+
+const removeGoodWith = (index) => {
+  form.value.goodWith.splice(index, 1)
+}
+
 const addRequirement = () => {
   if (newRequirement.value.trim()) {
     form.value.requirements.push(newRequirement.value.trim())
@@ -209,17 +406,21 @@ const removeRequirement = (index) => {
   form.value.requirements.splice(index, 1)
 }
 
+const nextStep = () => {
+  if (!form.value.name || !form.value.type || !form.value.age || !form.value.description || !form.value.imageUrl) {
+    error.value = 'Udfyld venligst alle felter'
+    return
+  }
+  currentStep.value = 2
+  error.value = null
+}
+
 const submitForm = async () => {
   try {
     isSubmitting.value = true
     error.value = null
 
-    if (!form.value.imageUrl) {
-      error.value = 'Vælg venligst et billede'
-      return
-    }
-
-    // Add pet to Firestore with the base64 image data
+    // Add pet to Firestore with all fields
     const pet = {
       ...form.value,
       createdAt: new Date()
@@ -242,14 +443,78 @@ const submitForm = async () => {
 
 .add-pet-form {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 2rem;
+  
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: vars.$border-radius-large;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: vars.$border-radius-medium;
+    background: white;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+    cursor: pointer;
+    
+    &.active {
+      opacity: 1;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      
+      .step-number {
+        background: vars.$primary-color;
+        color: white;
+      }
+      
+      .step-label {
+        color: vars.$text-color-dark;
+      }
+    }
+    
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #eee;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: vars.$font-weight-bold;
+      font-size: 0.9rem;
+    }
+    
+    .step-label {
+      font-weight: vars.$font-weight-medium;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.form-step {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: white;
-  border-radius: vars.$border-radius-large;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  grid-template-columns: 400px minmax(0, 1fr);
+  width: 100%;
+  min-height: 600px;
 
   .image-section {
     background-color: vars.$primary-color;
@@ -363,9 +628,10 @@ const submitForm = async () => {
 
   .form-section {
     padding: 2rem;
-
+    flex: 1;
+    
     h1 {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: vars.$font-weight-black;
       color: vars.$text-color-dark;
       margin: 0 0 0.5rem;
@@ -373,8 +639,8 @@ const submitForm = async () => {
 
     .subtitle {
       color: #666;
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-group {
@@ -385,7 +651,7 @@ const submitForm = async () => {
         font-weight: vars.$font-weight-bold;
         color: vars.$text-color-dark;
         margin-bottom: 0.5rem;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         letter-spacing: 0.05em;
       }
 
@@ -394,10 +660,10 @@ const submitForm = async () => {
       select,
       textarea {
         width: 100%;
-        padding: 0.8rem 1rem;
+        padding: 0.6rem 0.75rem;
         border: 2px solid #eee;
         border-radius: vars.$border-radius-medium;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-family: vars.$font-family;
         transition: all 0.3s ease;
         
@@ -413,7 +679,7 @@ const submitForm = async () => {
       }
 
       textarea {
-        min-height: 120px;
+        min-height: 100px;
         resize: vertical;
       }
     }
@@ -421,7 +687,7 @@ const submitForm = async () => {
     .form-row {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .form-actions {
@@ -487,67 +753,75 @@ const submitForm = async () => {
       }
     }
 
-    .requirements-input {
+    .tag-input-group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
 
-      input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid #eee;
-        border-radius: vars.$border-radius-medium;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        
-        &:focus {
-          outline: none;
-          border-color: vars.$primary-color;
-          box-shadow: 0 0 0 3px rgba(vars.$primary-color, 0.1);
-        }
-      }
-    }
+      .tag-input {
+        input {
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          border: 2px solid #eee;
+          border-radius: vars.$border-radius-medium;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          
+          &:focus {
+            outline: none;
+            border-color: vars.$primary-color;
+            box-shadow: 0 0 0 3px rgba(vars.$primary-color, 0.1);
+          }
 
-    .requirements-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-
-      .requirement-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        background: rgba(vars.$primary-color, 0.1);
-        color: vars.$primary-color;
-        border-radius: 1rem;
-        font-size: 0.85rem;
-        font-weight: 500;
-
-        .remove-tag {
-          background: none;
-          border: none;
-          color: inherit;
-          font-size: 1.2rem;
-          line-height: 1;
-          padding: 0;
-          cursor: pointer;
-          opacity: 0.7;
-          transition: opacity 0.3s ease;
-
-          &:hover {
-            opacity: 1;
+          &::placeholder {
+            color: #999;
           }
         }
       }
-    }
-  }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
 
-    .image-section {
-      min-height: 300px;
+        .tag {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.35rem 0.75rem;
+          border-radius: 1rem;
+          font-size: 0.8rem;
+          font-weight: 500;
+          line-height: 1;
+          background-color: white;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          color: #888;
+          text-transform: none;
+          letter-spacing: 0;
+          
+          .remove-tag {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            cursor: pointer;
+            margin-left: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              color: vars.$error-color;
+            }
+          }
+
+          &:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+          }
+        }
+      }
     }
   }
 }
@@ -565,6 +839,62 @@ const submitForm = async () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  .image-preview-container {
+    flex: 1;
+    border-radius: vars.$border-radius-medium;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.radio-button {
+  flex: 1;
+  min-width: 100px;
+  
+  input {
+    display: none;
+    
+    &:checked + span {
+      background: vars.$primary-color;
+      color: white;
+      border-color: vars.$primary-color;
+    }
+  }
+  
+  span {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #eee;
+    border-radius: vars.$border-radius-medium;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    
+    &:hover {
+      border-color: vars.$primary-color;
+      color: vars.$primary-color;
+    }
   }
 }
 </style> 
