@@ -86,7 +86,7 @@ export default {
   setup() {
     const categoryColors = {
       'dog': '#4ecdc4',    // Mint
-      'cat': '#f15bb5',    // Pink (matching the filter button)
+      'cat': '#e9203b',    // Pink (matching the filter button)
       'rabbit': '#ffa45c', // Orange
       'bird': '#4361ee',   // Blue
       'fish': '#00b8a9',   // Teal
@@ -291,16 +291,46 @@ export default {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: rgba(vars.$primary-color, 0.9);
+  background: linear-gradient(135deg, #ff3366, #ff6b6b);
   color: white;
   padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 8px rgba(255, 51, 102, 0.25);
   backdrop-filter: blur(4px);
-  z-index: 2;
+  z-index: 10;
+  overflow: hidden;
+  text-transform: uppercase;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shine 3s ease-in-out infinite;
+  }
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  15% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 @keyframes wiggle {

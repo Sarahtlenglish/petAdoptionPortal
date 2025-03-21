@@ -629,15 +629,33 @@ export default {
         position: absolute;
         bottom: 15px;
         left: 15px;
-        background: rgba(255, 107, 107, 0.95);
+        background: linear-gradient(135deg, #ff3366, #ff6b6b);
         color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        box-shadow: 0 3px 8px rgba(255, 51, 102, 0.25);
         backdrop-filter: blur(4px);
+        text-transform: uppercase;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+          );
+          animation: shine 3s ease-in-out infinite;
+        }
       }
     }
     
